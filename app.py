@@ -3,7 +3,7 @@ from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from datetime import datetime
 from flask_wtf import FlaskForm
-from wtforms import TextAreaField, SubmitField
+from wtforms import StringField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired
 
 app = Flask(__name__)
@@ -14,14 +14,18 @@ moment = Moment(app)
 
 posts = []
 
-@app.route("/")
+# @app.route("/")
+# def index():
+#     return render_template('base.html')
+
+
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template('base.html')
-
-
-@app.route("/user/<name>")
-def user(name):
-    return render_template('user.html', name=name)
+    form = NameForm()
+    if form.validate_on_submit():
+        session['name'] = form.name.data
+        return redirect(url_for('index'))
+    return render_template('user.html', form=form, name=session.get('name'))
 
 
 @app.route("/post", methods=["GET", "POST"])
@@ -46,3 +50,8 @@ def internal_server_error(e):
 class PostForm(FlaskForm):
     squeak = TextAreaField('Squeak something', validators=[DataRequired()])
     submit = SubmitField('Squeak')
+
+
+class NameForm(FlaskForm):
+    name = StringField("What's your name?", validators=[DataRequired()])
+    submit = SubmitField("Send")
