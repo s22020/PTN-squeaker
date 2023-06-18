@@ -14,11 +14,6 @@ moment = Moment(app)
 
 posts = []
 
-# @app.route("/")
-# def index():
-#     return render_template('base.html')
-
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     form = NameForm()
@@ -32,9 +27,9 @@ def index():
 def post():
     form = PostForm()
     if form.validate_on_submit():
-        posts.append(form.squeak.data)
+        posts.append(form.squeak.data.strip())
         return redirect(url_for('post'))
-    return render_template('post.html', form=form, posts=posts, current_time=datetime.utcnow())
+    return render_template('post.html', form=form, posts=posts, name=session.get('name'), current_time=datetime.utcnow())
 
 
 @app.errorhandler(404)
