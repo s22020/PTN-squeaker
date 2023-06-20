@@ -4,7 +4,7 @@
 {% block page_content %}
 {{ wtf.quick_form(form) }}
 {% for post in posts %}
-    <div class="page-content">{{ post }}</div>
-    <p>Posted {{ moment(current_time).fromNow(refresh=True) }} by {{ name | striptags }}</p>
+    <div class="page-content">{{ post.post | striptags }}</div>
+    <p>Posted {{ moment(current_time).fromNow(refresh=True) }} by {{ post.user.username | striptags }}</p>
 {% endfor %}
 {% endblock %}

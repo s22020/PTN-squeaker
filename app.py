@@ -23,14 +23,12 @@ migrate = Migrate(app, db)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
-posts = []
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     form = NameForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.name.data).first()
-        if User is None:
+        if user is None:
             user = User(username=form.name.data)
             db.session.add(user)
             db.session.commit()
@@ -44,15 +42,14 @@ def index():
 def post():
     form = PostForm()
     user = User.query.filter_by(username=session.get('name')).first()
-    posts = Post.query.filter_by(user=user).all()
-    if user is not None:
-        print(user)
-        if form.validate_on_submit():
-            post = Post(post=(form.post.data.strip()))
+    posts = Post.query.all()
+    if form.validate_on_submit():
+        if user is not None:
+            post = Post(post=form.post.data.strip(), user=user)
             db.session.add(post)
             db.session.commit()
-            form.post.data = ''
-            return redirect(url_for('post'))
+        form.post.data = ''
+        return redirect(url_for('post'))
     return render_template('post.html', form=form, posts=posts, name=session.get('name'), current_time=datetime.utcnow())
 
 
