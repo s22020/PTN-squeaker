@@ -3,7 +3,6 @@
 
 {% block page_content %}
     <div class="page-header">
-        <h1>Hello {% if name %}{{ name | striptags }}{% else %}anonymous{% endif %}</h1>
+        <h1>Hello {% if current_user.is_authenticated %}{{ current_user.username | striptags }}{% else %}anonymous{% endif %}</h1>
     </div>
-{{ wtf.quick_form(form) }}
 {% endblock %}

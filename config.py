@@ -13,7 +13,7 @@ class Config:
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
     SQUEAKER_MAIL_SUBJECT_PREFIX = '[Squeaker]'
-    SQUEAKER_MAIL_SENDER = 'Squeaker Admin <' + os.environ.get('SQUEAKER_MAIL_SENDER') + '>'
+    SQUEAKER_MAIL_SENDER = 'Squeaker Admin <' + str(os.environ.get('SQUEAKER_MAIL_SENDER')) + '>'
     
     @staticmethod
     def init_app(app):

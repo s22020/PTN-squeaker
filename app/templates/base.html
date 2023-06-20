@@ -25,14 +25,28 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">Main page</a></li>
+                <li><a href="{{ url_for('main.index') }}">Main page</a></li>
+                <li><a href="{{ url_for('main.post') }}">Posts</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
 </div>
 {% endblock %}
+
 {% block content %}
 <div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert"></button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
     {% block page_content %}{% endblock %}
 </div>
 {% endblock %}
