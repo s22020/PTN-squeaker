@@ -2,9 +2,25 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block page_content %}
+{% if current_user.is_authenticated %}
 {{ wtf.quick_form(form) }}
+<ul class="posts">
 {% for post in posts %}
-    <div class="page-content">{{ post.post | striptags }}</div>
-    <p>Posted {{ moment(current_time).fromNow(refresh=True) }} by {{ post.user.username | striptags }}</p>
+<li class="post">
+    <div class="profile-thumbnail">
+        <a href="{{ url_for('.user', username=post.author.username) }}">
+            <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40) }}">
+        </a>
+    </div>
+    <div class="post-date">{{ moment(post.timestamp).fromNow(refresh=True) }}</div>
+    <div class="post-author">
+        <a href="{{ url_for('.user', username=post.author.username) }}">
+            {{ post.author.username | striptags }}
+        </a>
+    </div>
+    <div class="post-body">{{ post.post | striptags }}</div>
+</li>
 {% endfor %}
+</ul>
+{% endif %}
 {% endblock %}

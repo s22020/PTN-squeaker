@@ -7,24 +7,33 @@ from ..models import User, Post
 from flask_login import login_user, logout_user, login_required, current_user
 
 
-@main.route("/")
+@main.route("/", methods=["GET", "POST"])
 def index():
-    return render_template('index.html')
-
-
-@main.route("/post", methods=["GET", "POST"])
-def post():
     form = PostForm()
-    user = User.query.filter_by(username=session.get('name')).first()
-    posts = Post.query.all()
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
     if form.validate_on_submit():
-        if user is not None:
-            post = Post(post=form.post.data.strip(), user=user)
+        if current_user.is_authenticated:
+            post = Post(post=form.post.data.strip(), author=current_user._get_current_object())
             db.session.add(post)
             db.session.commit()
         form.post.data = ''
+        return redirect(url_for('.index'))
+    return render_template('index.html', form=form, posts=posts)
+
+
+@main.route("/post", methods=["GET", "POST"])
+@login_required
+def post():
+    form = PostForm()
+    user = User.query.filter_by(username=current_user.username).first()
+    posts = user.posts.order_by(Post.timestamp.desc()).all()
+    if form.validate_on_submit():
+        post = Post(post=form.post.data.strip(), user=current_user._get_current_object())
+        db.session.add(post)
+        db.session.commit()
+        form.post.data = ''
         return redirect(url_for('.post'))
-    return render_template('post.html', form=form, posts=posts, name=session.get('name'), current_time=datetime.utcnow())
+    return render_template('post.html', form=form, posts=posts)
 
 
 @main.route('/user/<username>')

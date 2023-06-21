@@ -17,10 +17,11 @@ class User(UserMixin, db.Model):
     about_me = db.Column(db.String(160))
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
-    posts = db.relationship('Post', backref='user', lazy='dynamic')
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     
     def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
         if self.email is not None and self.avatar_hash is None:
             self.avatar_hash = self.gravatar_hash()
 
@@ -73,7 +74,7 @@ class Post(db.Model):
     post = db.Column(db.String(140), index=True, nullable=False)
     likes = db.Column(db.Integer)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
         return '<Post %r>' % self.post

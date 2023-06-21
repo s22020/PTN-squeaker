@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 2b39117f40dd
+Revision ID: d5714beb25bc
 Revises: 
-Create Date: 2023-06-20 23:10:07.786441
+Create Date: 2023-06-22 00:05:06.467364
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2b39117f40dd'
+revision = 'd5714beb25bc'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +23,10 @@ def upgrade():
     sa.Column('email', sa.String(length=64), nullable=True),
     sa.Column('username', sa.String(length=64), nullable=False),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
+    sa.Column('location', sa.String(length=64), nullable=True),
+    sa.Column('about_me', sa.String(length=160), nullable=True),
+    sa.Column('member_since', sa.DateTime(), nullable=True),
+    sa.Column('avatar_hash', sa.String(length=32), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('users', schema=None) as batch_op:
@@ -33,8 +37,9 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('post', sa.String(length=140), nullable=False),
     sa.Column('likes', sa.Integer(), nullable=True),
-    sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.Column('timestamp', sa.DateTime(), nullable=True),
+    sa.Column('author_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['author_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('posts', schema=None) as batch_op:
