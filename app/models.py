@@ -3,8 +3,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from . import login_manager
 import jwt
+import hashlib
 from datetime import datetime, timedelta
-from flask import current_app
+from flask import current_app, request
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -15,7 +16,13 @@ class User(UserMixin, db.Model):
     location = db.Column(db.String(64))
     about_me = db.Column(db.String(160))
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+    avatar_hash = db.Column(db.String(32))
     posts = db.relationship('Post', backref='user', lazy='dynamic')
+
+    
+    def __init__(self, **kwargs):
+        if self.email is not None and self.avatar_hash is None:
+            self.avatar_hash = self.gravatar_hash()
 
     @property
     def password(self):
@@ -43,6 +50,18 @@ class User(UserMixin, db.Model):
         user.password = new_password
         db.session.add(user)
         return True
+
+    def gravatar(self, size=100, default='retro', rating='g'):
+        if request.is_secure:
+            url = 'https://secure.gravatar.com/avatar'
+        else:
+            url = 'http://www.gravatar.com/avatar'
+        hash = self.avatar_hash or self.gravatar_hash()
+        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
+            url=url, hash=hash, size=size, default=default, rating=rating)
+
+    def gravatar_hash(self):
+        return hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
 
     def __repr__(self):
         return '<User %r>' % self.username
