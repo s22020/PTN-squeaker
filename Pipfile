@@ -13,6 +13,8 @@ flask-migrate = "*"
 flask-mail = "*"
 flask-login = "*"
 email-validator = "*"
+itsdangerous = "*"
+pyjwt = "*"
 
 [dev-packages]
 

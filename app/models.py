@@ -2,6 +2,9 @@ from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from . import login_manager
+import jwt
+from datetime import datetime, timedelta
+from flask import current_app
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -21,6 +24,22 @@ class User(UserMixin, db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def generate_password_reset_token(self):
+        return jwt.encode({'reset_password': self.id, 'exp': datetime.utcnow() + timedelta(minutes=60)}, current_app.config['SECRET_KEY'], algorithm='HS512')
+
+    @staticmethod
+    def reset_password(token, new_password):
+        try:
+            decoded_token = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS512'])['reset_password']
+        except:
+            return False
+        user = User.query.get(decoded_token)
+        if user is None:
+            return False
+        user.password = new_password
+        db.session.add(user)
+        return True
 
     def __repr__(self):
         return '<User %r>' % self.username
