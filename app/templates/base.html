@@ -6,6 +6,7 @@
 {{ super() }}
 <link rel="shortcut" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css">
 {% endblock %}
 
 {% block title %}Squeaker{% endblock %}
@@ -31,6 +32,9 @@
                 <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
                 {% else %}
                 <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                {% endif %}
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('main.user', username=current_user.username) }}">Profile</a></li>
                 {% endif %}
             </ul>
         </div>

@@ -1,8 +1,19 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
 
 {% block page_content %}
     <div class="page-header">
-        <h1>Hello {% if current_user.is_authenticated %}{{ current_user.username | striptags }}{% else %}anonymous{% endif %}</h1>
+        <h1>{{ user.username }}</h1>
+        {% if user.location %}
+        <p>
+            {% if user.location %}
+            <i class="fa-thin fa-location-dot"></i> {{ user.location }}
+            {% endif %}
+        </p>
+        {% endif %}
+        {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+        <p><i class="fa-solid fa-calendar-days"></i> Joined {{ moment(user.member_since).format('L') }}</p>
+    </div>
+    <div class="col-md-4">
+        <button type="button" class="btn btn-dark"><a href="{{ url_for('main.edit_profile') }}">Edit Profile</a></button>
     </div>
 {% endblock %}

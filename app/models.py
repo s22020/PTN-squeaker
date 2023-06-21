@@ -12,6 +12,9 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True, nullable=False)
     password_hash = db.Column(db.String(128))
+    location = db.Column(db.String(64))
+    about_me = db.Column(db.String(160))
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     posts = db.relationship('Post', backref='user', lazy='dynamic')
 
     @property
