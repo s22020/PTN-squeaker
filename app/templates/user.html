@@ -8,7 +8,7 @@
             {% if user.location %}
             <p>
                 {% if user.location %}
-                <i class="fa-thin fa-location-dot"></i> {{ user.location }}
+                <i class="fa-solid fa-location-dot"></i> {{ user.location }}
                 {% endif %}
             </p>
             {% endif %}
@@ -16,7 +16,11 @@
             <p><i class="fa-solid fa-calendar-days"></i> Joined {{ moment(user.member_since).format('L') }}</p>
         </div>
     </div>
+    {% if user.username == current_user.username %}
     <div class="col-md-4">
         <button type="button" class="btn btn-dark"><a href="{{ url_for('main.edit_profile') }}">Edit Profile</a></button>
     </div>
+    {% endif %}
+    <h3>{{ user.username }}'s posts</h3>
+    {% include '_posts.html' %}
 {% endblock %}
