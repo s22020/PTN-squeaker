@@ -88,3 +88,8 @@
 .profile-username {
     text-align: center;
 }
+
+.edit-profile-button {
+    text-decoration: none;
+    color: black;
+}
