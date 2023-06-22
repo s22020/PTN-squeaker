@@ -78,3 +78,16 @@ def edit_post(id):
         return redirect(url_for('.post_id', id=post.id))
     form.post.data = post.post
     return render_template('edit-post.html', form=form)
+
+
+@main.route('/delete-post/<int:id>', methods=['GET', 'DELETE'])
+@login_required
+def delete_post(id):
+    post = Post.query.get_or_404(id)
+    if current_user != post.author:
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+    flash('Your post was deleted.')
+    return redirect(url_for('.index'))
+    
