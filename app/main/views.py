@@ -61,3 +61,20 @@ def edit_profile():
     form.location.data = current_user.location
     form.about_me.data = current_user.about_me
     return render_template('edit-profile.html', form=form)
+
+
+@main.route('/edit-post/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_post(id):
+    post = Post.query.get_or_404(id)
+    if current_user != post.author:
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.post = form.post.data
+        db.session.add(post)
+        db.session.commit()
+        flash('Post was updated.')
+        return redirect(url_for('.post_id', id=post.id))
+    form.post.data = post.post
+    return render_template('edit-post.html', form=form)
